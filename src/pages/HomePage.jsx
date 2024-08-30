@@ -4,13 +4,19 @@ import { getPokemonList } from "../api";
 
 export default function HomePage() {
   const [pokemons, setPokemons] = useState([]);
+  const [offset, setOffset] = useState(0);
 
   useEffect(() => {
-    getPokemonList()
-      .then((pokemonListResponse) => setPokemons(pokemonListResponse))
-      // .then(setPokemons) Es equivalente, pero no es tan claro
+    loadMorePokemons();
+  }, [offset]);
+
+  const loadMorePokemons = () => {
+    getPokemonList(100, offset)
+      .then((pokemonListResponse) =>
+        setPokemons((prev) => [...prev, ...pokemonListResponse])
+      )
       .catch((error) => console.error("Error fetching data: ", error));
-  }, []);
+  };
 
   return (
     <main>
@@ -24,6 +30,12 @@ export default function HomePage() {
           return <Pokemon key={pokemon.name} name={pokemon.name} />;
         })}
       </section>
+      <button
+        onClick={() => setOffset((prev) => prev + 100)}
+        className="mt-4 px-4 py-4 w-full bg-[#3c3c3c] text-[#E9EAE4] text-lg rounded transition-colors duration-300 ease-in-out hover:bg-[#E9EAE4] hover:text-[#3c3c3c]"
+      >
+        Catch more Pokemons!!!
+      </button>
     </main>
   );
 }

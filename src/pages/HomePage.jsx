@@ -1,18 +1,15 @@
 import { useEffect, useState } from "react";
-import Pokemon from "./components/Pokemon";
+import Pokemon from "../components/Pokemon";
+import { getPokemonList } from "../api";
 
-export default function App() {
+export default function HomePage() {
   const [pokemons, setPokemons] = useState([]);
 
   useEffect(() => {
-    fetch("https://pokeapi.co/api/v2/pokemon?limit=50")
-      .then((response) => response.json())
-      .then((jsonResponse) => {
-        setPokemons(jsonResponse.results);
-      })
-      .catch((error) => {
-        console.error("Error fetching data: ", error);
-      });
+    getPokemonList()
+      .then((pokemonListResponse) => setPokemons(pokemonListResponse))
+      // .then(setPokemons) Es equivalente, pero no es tan claro
+      .catch((error) => console.error("Error fetching data: ", error));
   }, []);
 
   return (

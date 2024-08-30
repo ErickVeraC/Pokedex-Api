@@ -1,25 +1,30 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { getPokemonByName } from "../api";
+import { useNavigate } from "react-router-dom";
 
 export default function Pokemon({ name }) {
-  const [pokemon, setPokemon] = useState(null);
+  const navigate = useNavigate();
+  const [pokemon, setPokemon] = useState({});
 
   useEffect(() => {
-    fetch(`https://pokeapi.co/api/v2/pokemon/${name}`)
-      .then((response) => response.json())
-      .then((data) => setPokemon(data))
+    getPokemonByName(name)
+      .then((pokemonResponse) => setPokemon(pokemonResponse))
       .catch((error) => console.error("Error fetching pokemon data:", error));
-  }, [name]);
-
-  if (!pokemon) return <div>Loading...</div>;
+  }, []);
 
   return (
-    <article className="flex flex-col items-center p-4 bg-[#3c3c3c] border-2 border-black shadow-lg rounded-lg text-center text-lg font-semibold hover:bg-white hover:bg-opacity-25 hover:text-black hover:scale-110 transition-all duration-300 ease-in-out">
+    <article
+      onClick={() => {
+        navigate(`/pokemon/${name}`);
+      }}
+      className="flex flex-col items-center p-4 bg-[#3c3c3c] border-2 border-black shadow-lg rounded-lg text-center text-lg font-semibold hover:bg-white hover:bg-opacity-25 hover:text-black hover:scale-110 transition-all duration-300 ease-in-out"
+    >
       <img
-        className="h-40"
+        className="h-40 transform transition-transform duration-300 ease-in-out hover:scale-150"
         src={pokemon.sprites?.other["official-artwork"]?.front_default}
         alt={name}
       />
-      <h2 className="text-xl font-bold">{name}</h2>
+      <h2 className="text-xl font-bold capitalize">{name}</h2>
     </article>
   );
 }
